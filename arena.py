@@ -4,8 +4,11 @@ from detailCombat import DetailCombat
 
 class Arena:
 
-    character_lst = []
+    character_lst : list[Personnage] = []
     historique_combat = []
+
+    def __len__():
+        return len(Arena.character_lst)
 
     @classmethod
     def add_character(cls, character : Personnage):
@@ -23,12 +26,12 @@ class Arena:
         string = "\nPersonnages"
         index = 0
         for i in Arena.character_lst:
-            string += f"\n({index}) {i.__str__()}"
+            string += f"\n({index}) {i}"
             index += 1
         print(string)
 
     @classmethod
-    def combat(cls, attacker1 : int, attacker2 : int):
+    def combat(cls, attacker1 : int, attacker2 : int, battle_royale : bool):
         """ func pour faire combattre deux personnages
 
         Args:
@@ -59,6 +62,38 @@ class Arena:
                 Arena.historique_combat[len(Arena.historique_combat) - 1].define_winner(Arena.character_lst[attacker].nom)
                 Arena.character_lst.pop(defenser) #tue le personnage (il est mort)
                 break
+
+    
+    @classmethod
+    def battle_royale(cls):
+        """ func pour faire combattre tous les chars
+        """
+        while len(Arena.character_lst) > 1:
+            attacker = None
+            defenser = None
+            tour = 0
+            combat_info = ""
+            attacker1 = 0
+            attacker2 = 1
+            while True: #sry c plus beau
+                tour +=1
+                if tour % 2 != 0:
+                    attacker = attacker1
+                    defenser = attacker2
+                elif tour % 2 == 0:
+                    attacker = attacker2
+                    defenser = attacker1
+                damage = Arena.character_lst[attacker].attaquer()
+                Arena.character_lst[defenser].take_damage(damage)
+                combat_info += f"Tour {tour}\n{Arena.character_lst[attacker].nom} fait {damage} degat a {Arena.character_lst[defenser].nom}\n"
+                if Arena.character_lst[defenser].pv <= 0:
+                    combat_info += f"{Arena.character_lst[attacker].nom} gagne le combat"
+                    print(combat_info)
+                    Arena.historique_combat.append(DetailCombat(combat_info, Arena.character_lst[attacker].nom, Arena.character_lst[defenser].nom))
+                    Arena.historique_combat[len(Arena.historique_combat) - 1].define_winner(Arena.character_lst[attacker].nom)
+                    Arena.heal_char(attacker)
+                    Arena.character_lst.pop(defenser) #tue le personnage (il est mort)
+                    break
             
     def view_fight(index : int):
         """permet de revoir un combat precedent
@@ -75,3 +110,11 @@ class Arena:
         for i in range(len(Arena.historique_combat)):
             string += f"\n({i}) {Arena.historique_combat[i].__str__()}"
         print(string)
+
+    def heal_char(index : int):
+        """soigne un char
+
+        Args:
+            index (int): index du char dans la liste de char
+        """
+        Arena.character_lst[index].pv = Arena.character_lst[index].max_life

@@ -1,8 +1,9 @@
 from personnage import Personnage
 import random
+from armure import Armor
 class Archer(Personnage):
     def __init__(self, nom, pv, attaque, dext : int):
-        super().__init__(nom, pv, attaque)
+        super().__init__(nom, pv, attaque, Armor("Tunique en cuir", 5))
         self._dext = dext
 
         self.dext = self._dext

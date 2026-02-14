@@ -1,10 +1,11 @@
 from personnage import Personnage
+from armure import Armor
 import random
 class Guerrier(Personnage):
     
     
     def __init__(self, nom : str, pv : int, attaque : int, force : int):
-        super().__init__(nom, pv, attaque)
+        super().__init__(nom, pv, attaque, Armor("Armure de plaque", 12))
         self._force = force
 
         self.force = self._force
@@ -15,6 +16,7 @@ class Guerrier(Personnage):
     @property
     def force(self):
         return self._force
+    
     @force.setter
     def force(self, amount : int):
         if amount <= 0:
